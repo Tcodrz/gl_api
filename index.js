@@ -24,8 +24,16 @@ app.use('/api/users', user_routes);
 console.log(enviorment.env);
 
 app.get('/api', async (req, res) => {
-    const users = await UserModel.find();
-    return res.status(200).send('<h1>Hello From Server</h1>' + users[0].sFirstName);
+    try {
+
+        const users = await UserModel.find();
+        console.log(users);
+        return res.status(200).send('<h1>Hello From Server</h1>' + users[0].sFirstName);
+    } catch (error) {
+
+        console.error(error);
+        return res.status(500).send(error);
+    }
 });
 
 try {
