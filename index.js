@@ -7,6 +7,7 @@ const morgan = require("morgan");
 const enviorment = require("./environment/environmnet");
 const lists_routes = require("./routes/lists.routes");
 const user_routes = require("./routes/user.routes");
+const UserModel = require('./models/user.model');
 
 const app = express();
 const port = process.env.PORT || 8000;
@@ -17,14 +18,15 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 
 
-app.get('/api', (req, res) => {
-    return res.status(200).send('<h1>Hello From Server</h1>');
-});
-
 app.use('/api/lists', lists_routes);
 app.use('/api/users', user_routes);
 
 console.log(enviorment.env);
+
+app.get('/api', async (req, res) => {
+    const users = await UserModel.find();
+    return res.status(200).send('<h1>Hello From Server</h1>' + users[0].sFirstName);
+});
 
 try {
     const sConnectionString = enviorment.env.production ? enviorment.env.dbCloudURI : enviorment.env.dbLocalURI;
