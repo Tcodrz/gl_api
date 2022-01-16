@@ -47,13 +47,11 @@ UserController.Login = async (req, res) => {
         const isMatch = await comparePassword(user.sPassword, u.sPassword);
         console.log(isMatch);
         const userToClient = await UserModel.findOne({ _id: user._id });
-        if (isMatch)
-            return res.status(StatusCodes.OK).json({ data: userToClient });
-        else
-            return res.status(StatusCodes.BadRequest).json({ error: true, message: 'one or more details is incorrect' });
+        if (isMatch) return res.status(StatusCodes.OK).json({ data: userToClient });
+        else return res.status(StatusCodes.BadRequest).json({ error: true, message: 'one or more details is incorrect' });
     }
     catch (error) {
-        return res.status(StatusCodes.ServerError).json({ error: true });
+        return res.status(StatusCodes.ServerError).json({ error: true, message: 'Something went Wrong' });
     }
 };
 UserController.CreateGroup = async (req, res) => {
