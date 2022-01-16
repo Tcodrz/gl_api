@@ -18,9 +18,7 @@ app.use(morgan('dev'));
 
 
 app.get('/api', (req, res) => {
-    return res.status(200).json({
-        message: 'Server Health Check OK'
-    });
+    return res.status(200).send('<h1>Hello From Server</h1>');
 });
 
 app.use('/api/lists', lists_routes);
