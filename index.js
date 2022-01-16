@@ -26,9 +26,9 @@ console.log(enviorment.env);
 app.get('/api', async (req, res) => {
     try {
 
-        const users = await UserModel.find();
-        console.log(users);
-        return res.status(200).send('<h1>Hello From Server</h1>' + users[0].sFirstName);
+        // const users = await UserModel.find();
+        // console.log(users);
+        return res.status(200).send('<h1>Hello From Server</h1>');
     } catch (error) {
 
         console.error(error);
