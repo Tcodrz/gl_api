@@ -26,7 +26,7 @@ UserController.GetByID = async (req, res) => {
 };
 UserController.Auth = async (req, res) => {
     try {
-        const verifiedToken = jwt.verify(req.body.token, 'mySuperSecretKey', { algorithms: 'HS256' });
+        const verifiedToken = jwt.verify(req.body.token.toString(), 'mySuperSecretKey', { algorithms: 'HS256' });
         const user = await UserModel.findOne({ _id: verifiedToken._id });
         if (!user) return res.status(StatusCodes.ServerError).json({ error: true, message: 'illeagal token bad reqest' });
         else return res.status(StatusCodes.OK).json({ data: user });
