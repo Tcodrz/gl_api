@@ -16,6 +16,16 @@ function comparePassword(password, candidatePassword) {
     });
 }
 
+function getToken(value) {
+    const token = jwt.sign(value, 'mySuperSecretKey');
+    return token;
+}
+function verifyToken(token) {
+    const value = jwt.verify(token, 'mySuperSecretKey');
+    if (value) return value;
+    else return null;
+}
+
 const UserController = {};
 
 UserController.GetAll = async (req, res) => {
@@ -26,7 +36,7 @@ UserController.GetByID = async (req, res) => {
 };
 UserController.Auth = async (req, res) => {
     try {
-        const verifiedToken = jwt.verify(req.body.token.toString(), 'mySuperSecretKey', { algorithms: 'HS256' });
+        const verifiedToken = verifyToken(req.body.token);
         const user = await UserModel.findOne({ _id: verifiedToken._id });
         if (!user) return res.status(StatusCodes.ServerError).json({ error: true, message: 'illeagal token bad reqest' });
         else return res.status(StatusCodes.OK).json({ data: user });
@@ -41,7 +51,7 @@ UserController.Register = async (req, res) => {
         if (u) return res.status(StatusCodes.BadRequest).json({ error: true, message: 'email exists,  try login' });
         const newUser = new UserModel(user);
         await newUser.save();
-        const token = jwt.sign({ _id: newUser._id, sFirstName: newUser.sFirstName, sLastName: newUser.sLastName, sEmail: newUser.sEmail }, 'mySuperSecretKey', { algorithm: 'HS256' });
+        const token = getToken({ _id: newUser._id, sFirstName: newUser.sFirstName, sLastName: newUser.sLastName, sEmail: newUser.sEmail });
         const userToClient = await UserModel.findOne({ _id: newUser._id });
         return res.status(StatusCodes.OK).json({ data: { token: token, user: userToClient } });
     }
@@ -56,7 +66,8 @@ UserController.Login = async (req, res) => {
         if (!user) return res.status(StatusCodes.BadRequest).json({ error: true, message: 'one or more details is incorrect' });
         const isMatch = await comparePassword(user.sPassword, u.sPassword,);
         const userToClient = await UserModel.findOne({ _id: user._id });
-        if (isMatch) return res.status(StatusCodes.OK).json({ data: userToClient });
+        const token = getToken({ _id: userToClient._id, sEmail: userToClient.sEmail });
+        if (isMatch) return res.status(StatusCodes.OK).json({ data: { token: token, user: userToClient } });
         else return res.status(StatusCodes.BadRequest).json({ error: true, message: 'one or more details is incorrect' });
     }
     catch (error) {
