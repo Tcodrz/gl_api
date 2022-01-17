@@ -12,4 +12,4 @@ UsersRouter.post('/new-group', UserController.CreateGroup);
 UsersRouter.post('/add-group-member', UserController.AddAllowedMemberToGroup);
 UsersRouter.post('/auth', UserController.Auth);
 
-module.exports = UsersRouter;
+module.exports = UsersRouter; // export users router
