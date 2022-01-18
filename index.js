@@ -7,7 +7,6 @@ const morgan = require("morgan");
 const enviorment = require("./environment/environmnet");
 const lists_routes = require("./routes/lists.routes");
 const user_routes = require("./routes/user.routes");
-const UserModel = require('./models/user.model');
 
 const app = express();
 const port = process.env.PORT || 8000;
@@ -36,7 +35,7 @@ try {
     const sConnectionString = enviorment.env.production ? enviorment.env.dbCloudURI : enviorment.env.dbLocalURI;
     mongoose.connect(sConnectionString).then(() => {
         console.log('MongoDB Connected');
-    });
+    }).catch(error => console.error(error));
     app.listen(port, () => {
         console.log('Server Listening on port ' + port);
     });

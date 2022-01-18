@@ -44,7 +44,6 @@ ListController.AddList = async (req, res) => {
     }
 };
 ListController.Update = async (req, res) => {
-    console.log(req.body);
     return res.status(200).json({
         data: []
     });
@@ -78,24 +77,39 @@ ListController.RemoveItemFromList = async (req, res) => {
         }
         const list = await ListModel.findOne({ _id: sListID });
         items.forEach(async (item) => {
-            try {
-                if (list) {
-                    list.items = list.items.filter(i => i._id.toString() !== item._id);
-                    await list.save();
-                }
-            }
-            catch (error) {
-                return res.status(StatusCodes.NotFound).json({
-                    error: true,
-                    message: 'Could not delete item'
-                });
+            if (list) {
+                list.items = list.items.filter(i => i._id.toString() !== item._id);
+                await list.save();
             }
         });
         return res.status(StatusCodes.OK).json({ data: list });
     }
     catch (error) {
-        return res.status(StatusCodes.ServerError).json({ error: true });
+        return res.status(StatusCodes.ServerError).json({ error: true, message: error.message });
     }
 };
-
+ListController.MarkItemsCheck = async (req, res) => {
+    try {
+        const { sListID, items } = req.body;
+        const list = await ListModel.findOne({ _id: sListID });
+        if (!list) return res.status(StatusCodes.NotFound).json({ error: true, message: 'Cold not find specified list' });
+        list.items.forEach(item => { for (let i = 0; i < items.length; i++) item.bChecked = item.bChecked || items[i]._id == item._id; });
+        await list.save();
+        res.status(StatusCodes.OK).json({ data: list });
+    } catch (error) {
+        res.status(StatusCodes.ServerError).json({ error: true, message: error.message });
+    }
+}
+ListController.UnCheckItems = async (req, res) => {
+    try {
+        const { sListID, items } = req.body;
+        const list = await ListModel.findOne({ _id: sListID });
+        if (!list) return res.status(StatusCodes.NotFound).json({ error: true, message: 'Could not find specified list' });
+        list.items.forEach(item => { for (let i = 0; i < items.length; i++) { if (item._id.toString() === items[i]._id) item.bChecked = false; } });
+        await list.save();
+        return res.status(StatusCodes.OK).json({ data: list });
+    } catch (error) {
+        return res.status(StatusCodes.ServerError).json({ error: true, message: error.message });
+    }
+}
 module.exports = ListController;

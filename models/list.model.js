@@ -8,7 +8,8 @@ const ListSchema = new mongoose.Schema({
         sName: String,
         iAmount: Number,
         dCreated: Date,
-        sListID: String
+        sListID: String,
+        bChecked: Boolean,
     }],
     dCreated: {
         type: Date,
@@ -17,7 +18,7 @@ const ListSchema = new mongoose.Schema({
     dLaseUpdateed: {
         type: Date,
         default: new Date(),
-    }
+    },
 });
 
 const ListModel = mongoose.model('list', ListSchema);
