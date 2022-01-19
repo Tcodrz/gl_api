@@ -48,6 +48,14 @@ ListController.Update = async (req, res) => {
         data: []
     });
 };
+ListController.DeleteList = async (req, res) => {
+    try {
+        await ListModel.findOneAndDelete({ _id: req.body._id });
+        return res.status(StatusCodes.OK).json({ data: [] });
+    } catch (error) {
+        return res.status(StatusCodes.ServerError).json({ error: true, message: error.message });
+    }
+};
 ListController.AddItemToList = async (req, res) => {
     try {
         const item = req.body;
@@ -76,12 +84,12 @@ ListController.RemoveItemFromList = async (req, res) => {
             return res.status(StatusCodes.BadRequest).json({ error: true });
         }
         const list = await ListModel.findOne({ _id: sListID });
-        items.forEach(async (item) => {
-            if (list) {
-                list.items = list.items.filter(i => i._id.toString() !== item._id);
-                await list.save();
-            }
+        let listItems = list.items;
+        if (list) items.forEach(async (item) => {
+            listItems = list.items.filter(i => i._id.toString() !== item._id);
         });
+        list.items = listItems;
+        await list.save();
         return res.status(StatusCodes.OK).json({ data: list });
     }
     catch (error) {

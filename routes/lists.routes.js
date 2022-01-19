@@ -8,6 +8,7 @@ const router = express.Router();
 
 router.post('/load', ListsController.GetAllUsersLists);
 router.post('/add-list', ListsController.AddList);
+router.post('/list-delete', ListController.DeleteList);
 router.post('/add-item', ListsController.AddItemToList);
 router.post('/delete-item', ListsController.RemoveItemFromList);
 router.post('/mark-items-checked', ListController.MarkItemsCheck);
