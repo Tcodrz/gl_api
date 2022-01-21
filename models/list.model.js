@@ -10,6 +10,8 @@ const ListSchema = new mongoose.Schema({
         dCreated: Date,
         sListID: String,
         bChecked: Boolean,
+        sUnit: String,
+        sComment: String
     }],
     dCreated: {
         type: Date,

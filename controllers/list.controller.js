@@ -119,5 +119,17 @@ ListController.UnCheckItems = async (req, res) => {
     } catch (error) {
         return res.status(StatusCodes.ServerError).json({ error: true, message: error.message });
     }
+};
+ListController.ItemUpdate = async (req, res) => {
+    try {
+        const { sListID, item } = req.body;
+        const list = await ListModel.findOne({ _id: sListID });
+        const itemIndex = list.items.findIndex(x => x._id.toString() === item._id);
+        list.items[itemIndex] = item;
+        await list.save();
+        return res.status(StatusCodes.OK).json({ data: list });
+    } catch (error) {
+        return res.status(StatusCodes.ServerError).json({ error: true, message: error.message });
+    }
 }
 module.exports = ListController;
